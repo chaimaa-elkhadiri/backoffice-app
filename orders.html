@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Commandes - BackOffice</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="dashboard.html" class="logo">
+                    <i class="bi bi-building"></i>
+                    <span>BackOffice</span>
+                </a>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="dashboard.html" class="sidebar-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="users.html" class="sidebar-link">
+                        <i class="bi bi-people"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="products.html" class="sidebar-link">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Produits</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="orders.html" class="sidebar-link active">
+                        <i class="bi bi-cart"></i>
+                        <span>Commandes</span>
+                        <span class="badge bg-danger ms-auto" id="pendingOrdersBadge">0</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="invoices.html" class="sidebar-link">
+                        <i class="bi bi-receipt"></i>
+                        <span>Factures</span>
+                    </a>
+                </li>
+                <li class="sidebar-item mt-4">
+                    <a href="#" class="sidebar-link" onclick="logout()">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Top Navbar -->
+            <nav class="top-navbar">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i> Menu
+                </button>
+                
+                <div class="navbar-brand">
+                    <i class="bi bi-cart text-primary"></i>
+                    Gestion des Commandes
+                </div>
+                
+                <div class="user-info">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" 
+                                data-bs-toggle="dropdown">
+                            <i class="bi bi-translate"></i> Langue
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-flag-fr"></i> Français</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-flag-us"></i> Anglais</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-flag-sa"></i> Arabe</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" 
+                                data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="current-username">Administrateur</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="bi bi-box-arrow-right"></i> Déconnexion
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Page Content -->
+            <h1 class="page-title">
+                <i class="bi bi-cart"></i> Commandes Clients
+            </h1>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted">Total Commandes</h6>
+                                    <h3 id="totalOrdersCount">0</h3>
+                                </div>
+                                <div class="icon-stat">
+                                    <i class="bi bi-cart text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted">En attente</h6>
+                                    <h3 id="pendingOrdersCount" class="text-warning">0</h3>
+                                </div>
+                                <div class="icon-stat">
+                                    <i class="bi bi-clock text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted">Livrées</h6>
+                                    <h3 id="deliveredOrdersCount" class="text-success">0</h3>
+                                </div>
+                                <div class="icon-stat">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-muted">Chiffre d'affaires</h6>
+                                    <h3 id="totalRevenue">€0</h3>
+                                </div>
+                                <div class="icon-stat">
+                                    <i class="bi bi-currency-euro text-danger"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Bar -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <button class="btn btn-primary" onclick="createNewOrder()">
+                                <i class="bi bi-plus-circle"></i> Nouvelle commande
+                            </button>
+                            
+                            <button class="btn btn-outline-success ms-2" onclick="exportOrders()">
+                                <i class="bi bi-file-excel"></i> Exporter
+                            </button>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchOrders" 
+                                       placeholder="Rechercher une commande...">
+                                <button class="btn btn-outline-secondary" type="button" onclick="searchOrders()">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filtres -->
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <select class="form-control" id="filterStatus" onchange="filterOrders()">
+                                <option value="">Tous les statuts</option>
+                                <option value="pending">En attente</option>
+                                <option value="processing">En traitement</option>
+                                <option value="shipped">Expédiée</option>
+                                <option value="delivered">Livrée</option>
+                                <option value="cancelled">Annulée</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" id="filterDateFrom" onchange="filterOrders()" 
+                                   placeholder="Du">
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" id="filterDateTo" onchange="filterOrders()"
+                                   placeholder="Au">
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <select class="form-control" id="filterCustomer" onchange="filterOrders()">
+                                <option value="">Tous les clients</option>
+                                <!-- Rempli dynamiquement -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="ordersTable">
+                        <thead>
+                            <tr>
+                                <th>N° Commande</th>
+                                <th>Client</th>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Produits</th>
+                                <th>Statut</th>
+                                <th>Paiement</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Les commandes seront chargées ici -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <nav class="pagination-container p-3">
+                    <ul class="pagination justify-content-center" id="ordersPagination">
+                        <!-- La pagination sera générée ici -->
+                    </ul>
+                </nav>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Détails Commande -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-cart"></i> 
+                        <span id="orderModalTitle">Détails de la commande</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="orderDetailsContent">
+                        <!-- Contenu chargé dynamiquement -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Fermer
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="printOrder()">
+                        <i class="bi bi-printer"></i> Imprimer
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="generateInvoice()">
+                        <i class="bi bi-receipt"></i> Facture
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Changement Statut -->
+    <div class="modal fade" id="statusModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Changer le statut</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="currentOrderId">
+                    <div class="form-group">
+                        <label class="form-label">Nouveau statut</label>
+                        <select class="form-control" id="newStatus">
+                            <option value="pending">En attente</option>
+                            <option value="processing">En traitement</option>
+                            <option value="shipped">Expédiée</option>
+                            <option value="delivered">Livrée</option>
+                            <option value="cancelled">Annulée</option>
+                        </select>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label class="form-label">Commentaire (optionnel)</label>
+                        <textarea class="form-control" id="statusComment" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="updateOrderStatus()">
+                        Mettre à jour
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="auth.js"></script>
+    <script src="orders.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
